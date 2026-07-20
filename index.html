@@ -739,6 +739,8 @@
 }
     </style>
 </head>
+    <!-- === DARKEN OVERLAY === -->
+<div id="darkenOverlay"></div>
 <body>
 <div class="app-container" role="main">
     <!-- Header -->
@@ -1341,6 +1343,51 @@
 
     })();
 </script>
+// === DARKEN SCREEN AFTER 15 MINUTES ===
+function setupDarkenScreen() {
+    const darkenOverlay = document.getElementById('darkenOverlay');
+    let darkenTimer = null;
+    
+    function startDarkenTimer() {
+        // Limpiar timer anterior si existe
+        if (darkenTimer) {
+            clearTimeout(darkenTimer);
+        }
+        
+        // Reiniciar overlay
+        darkenOverlay.classList.remove('active');
+        
+        // Iniciar timer de 15 minutos (900,000 ms)
+        darkenTimer = setTimeout(() => {
+            darkenOverlay.classList.add('active');
+        }, 900000); // 15 minutos
+    }
+    
+    function resetDarkenTimer() {
+        if (darkenTimer) {
+            clearTimeout(darkenTimer);
+            darkenOverlay.classList.remove('active');
+            startDarkenTimer();
+        }
+    }
+    
+    // Iniciar el timer al cargar la página
+    startDarkenTimer();
+    
+    // Reiniciar el timer cuando el usuario interactúa con la página
+    const events = ['click', 'touchstart', 'keydown', 'scroll', 'mousemove'];
+    events.forEach(event => {
+        document.addEventListener(event, resetDarkenTimer);
+    });
+    
+    // Cuando el overlay está activo, al hacer clic se sale del modo oscuro
+    darkenOverlay.addEventListener('click', function() {
+        this.classList.remove('active');
+        startDarkenTimer(); // Reinicia el timer
+    });
+}
 
+// Llamar a la función después de init
+setupDarkenScreen();
 </body>
 </html>
